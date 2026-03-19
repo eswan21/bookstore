@@ -3,6 +3,15 @@
 {% block title %}Log in - Bookstore{% endblock %}
 
 {% block content %}
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
 <div class="container general-main-wrap">
     <div class="text-center">
         <h3 class="general-login-title">Log in</h3>
@@ -26,7 +35,9 @@
         <div class="form-group mb-30">
             <label for="password" class="control-label input-label">Password</label>
             <input id="password" name="password" type="password" placeholder="Password" class="form-control" />
+            <a href="{% url 'forgot_password' %}" class="help-block in-gold-500">Forgot password?</a>
         </div>
+
         <div class="text-center mb-30">
             <button class="btn btn-default general-position">Log in</button>
         </div>
