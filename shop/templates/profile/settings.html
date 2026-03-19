@@ -1,0 +1,323 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Settings address - Bookstore{% endblock %}
+
+{% block content %}
+<h1 class="general-title-margin">Settings</h1>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+<ul role="tablist" class="nav clearfix mb-20">
+    <li role="presentation" class="tab-item active">
+        <a href="#address" aria-controls="address" role="tab" data-toggle="tab" class="tab-link">Address</a>
+    </li>
+    <li role="presentation" class="tab-item">
+        <a href="#profile" aria-controls="privacy" role="tab" data-toggle="tab" class="tab-link">Profile</a>
+    </li>
+    <li role="presentation" class="tab-item">
+        <a href="#privacy" aria-controls="privacy" role="tab" data-toggle="tab" class="tab-link">Privacy</a>
+    </li>
+</ul>
+<div class="tab-content">
+    <div id="address" role="tabpanel" class="tab-pane fade in active general-main-wrap">
+            <div class="hidden-xs hidden-sm">
+                <div class="row">
+                    <div class="col-md-5">
+                        <h3 class="general-subtitle mt-0">Billing Address</h3>
+                    </div>
+                    <div class="col-md-5 col-md-offset-1">
+                        <h3 class="general-subtitle mt-0">Shipping Address</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-5 mb-40">
+                    <form method="post" action="{% url 'settings_billing_save' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="form_type" value="billing">
+                        <div class="visible-xs visible-sm">
+                            <h3 class="general-subtitle mt-0">Billing Address</h3>
+                        </div>
+                        <div class="form-group {% if billing_form.first_name.errors %}has-error{% endif %}">
+                            <label class="control-label input-label">First Name</label>
+                            {{ billing_form.first_name }}
+                            {% if billing_form.first_name.errors %}
+                            <span class="help-block">{{ billing_form.first_name.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                
+                        <div class="form-group {% if billing_form.last_name.errors %}has-error{% endif %}">
+                            <label class="control-label input-label">Last Name</label>
+                            {{ billing_form.last_name }}
+                            {% if billing_form.last_name.errors %}
+                            <span class="help-block">{{ billing_form.last_name.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                    
+                        <div class="form-group {% if billing_form.address1.errors %}has-error{% endif %}">
+                            <label class="control-label input-label">Address</label>
+                            {{ billing_form.address1 }}
+                            {% if billing_form.address1.errors %}
+                            <span class="help-block">{{ billing_form.address1.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                    
+                        <div class="form-group {% if billing_form.city.errors %}has-error{% endif %}">
+                            <label class="control-label input-label">City</label>
+                            {{ billing_form.city }}
+                            {% if billing_form.city.errors %}
+                            <span class="help-block">{{ billing_form.city.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                    
+                        <div class="form-group {% if billing_form.postcode.errors %}has-error{% endif %}">
+                            <label class="control-label input-label">Zip</label>
+                            {{ billing_form.postcode }}
+                            {% if billing_form.postcode.errors %}
+                            <span class="help-block">{{ billing_form.postcode.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                    
+                        <div class="form-group {% if billing_form.country.errors %}has-error{% endif %}">
+                            <label class="control-label input-label">Country</label>
+                            {{ billing_form.country }}
+                            {% if billing_form.country.errors %}
+                            <span class="help-block">{{ billing_form.country.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                    
+                        <div class="form-group {% if billing_form.phone.errors %}has-error{% endif %}">
+                            <label class="control-label input-label">Phone</label>
+                            {{ billing_form.phone }}
+                            {% if billing_form.phone.errors %}
+                            <span class="help-block">{{ billing_form.phone.errors.0 }}</span>
+                            {% endif %}
+                        </div> 
+                        <div>
+                            <div class="text-center general-text-align">
+                                <button class="btn btn-default" type="submit">Save</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+    
+                <div class="col-md-5 col-md-offset-1 mb-25">
+                    <form method="post" action="{% url 'settings_shipping_save' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="form_type" value="shipping">
+                        <div class="visible-xs visible-sm">
+                            <h3 class="general-subtitle mt-0">Shipping Address</h3>
+                        </div>
+                        <div class="form-group {% if shipping_form.first_name.errors %}has-error{% endif %}">
+                            <label class="control-label input-label">First Name</label>
+                            {{ shipping_form.first_name }}
+                            {% if shipping_form.first_name.errors %}
+                            <span class="help-block">{{ shipping_form.first_name.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                    
+                        <div class="form-group {% if shipping_form.last_name.errors %}has-error{% endif %}">
+                            <label class="control-label input-label">Last Name</label>
+                            {{ shipping_form.last_name }}
+                            {% if shipping_form.last_name.errors %}
+                            <span class="help-block">{{ shipping_form.last_name.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                    
+                        <div class="form-group {% if shipping_form.address1.errors %}has-error{% endif %}">
+                            <label class="control-label input-label">Address</label>
+                            {{ shipping_form.address1 }}
+                            {% if shipping_form.address1.errors %}
+                            <span class="help-block">{{ shipping_form.address1.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                    
+                        <div class="form-group {% if shipping_form.city.errors %}has-error{% endif %}">
+                            <label class="control-label input-label">City</label>
+                            {{ shipping_form.city }}
+                            {% if shipping_form.city.errors %}
+                            <span class="help-block">{{ shipping_form.city.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                    
+                        <div class="form-group {% if shipping_form.postcode.errors %}has-error{% endif %}">
+                            <label class="control-label input-label">Zip</label>
+                            {{ shipping_form.postcode }}
+                            {% if shipping_form.postcode.errors %}
+                            <span class="help-block">{{ shipping_form.postcode.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                    
+                        <div class="form-group {% if shipping_form.country.errors %}has-error{% endif %}">
+                            <label class="control-label input-label">Country</label>
+                            {{ shipping_form.country }}
+                            {% if shipping_form.country.errors %}
+                            <span class="help-block">{{ shipping_form.country.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                    
+                        <div class="form-group {% if shipping_form.phone.errors %}has-error{% endif %}">
+                            <label class="control-label input-label">Phone</label>
+                            {{ shipping_form.phone }}
+                            {% if shipping_form.phone.errors %}
+                            <span class="help-block">{{ shipping_form.phone.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+                        <div class="text-center general-text-align">
+                            <button class="btn btn-default" type="submit">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+    </div>
+    <div id="profile" role="tabpanel" class="tab-pane fade">
+        <div class="row mb-60">
+            <div class="col-sm-5">
+                <p class="in-gold-500 font-18 mb-25">Profile information</p>
+
+                <div id="profile-view" class="clearfix mb-20">
+                    {% if user.profile.avatar %}
+                        <img src="{{ user.profile.avatar.url }}"
+                            class="img-circle logo-size inlide-block pull-left" />
+                    {% else %}
+                        <div class="default-avatar inlide-block pull-left img-circle logo-size">
+                            {{ user.first_name|default:user.username|first|upper }}
+                        </div>
+                    {% endif %}
+                    <div class="ml-70">
+                        <div>
+                            <div class="max-240">
+                                <div class="general-message-name">{{ user.get_full_name|default:user.username }}</div>
+                                <a href="#" id="edit-profile-btn" class="general-edit">edit</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <form id="profile-form" method="post" action="{% url 'settings_profile_save' %}" enctype="multipart/form-data" class="general-form-md" style="display: none;">
+                    <button id="cancel-profile-btn" type="button" class="close" data-dismiss="modal" aria-label="Close" style="font-size: 27px !important">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    {% csrf_token %}
+                    <input type="hidden" name="form_type" value="profile">
+                    <div class="form-group mb-35">
+                        <label class="control-label input-label">Avatar</label>
+                        <input type="file" name="avatar" class="form-control">
+                    </div>
+                
+                    <div class="form-group mb-35">
+                        <label class="control-label input-label">First Name</label>
+                        <input name="fname" type="text" placeholder="First Name"
+                               value="{{ user.first_name }}"
+                               class="form-control"/>
+                    </div>
+                
+                    <div class="form-group mb-35">
+                        <label class="control-label input-label">Last Name</label>
+                        <input name="lname" type="text" placeholder="Last Name"
+                               value="{{ user.last_name }}"
+                               class="form-control"/>
+                    </div>
+                
+                    <div class="general-text-align">
+                        <button class="btn btn-default mb-35">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div id="privacy" role="tabpanel" class="tab-pane fade">
+        <div class="row mb-60">
+            <div class="col-sm-5">
+                <p class="in-gold-500 font-18 mb-25">Email</p>
+
+                <form  method="post" class="general-form-md" action="{% url 'settings_email_save' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="form_type" value="email">
+                    <div class="form-group mb-35">
+                        <label for="email" class="control-label input-label">Enter Email</label>
+                        <input id="email" name="email" type="email" placeholder="Enter your email" value="{{ user.email }}"
+                            class="form-control" />
+                    </div>
+                    <div class="general-text-align">
+                        <button class="btn btn-default mb-35">Save</button>
+                    </div>
+                </form>
+
+            </div>
+            <div class="col-sm-5 col-sm-offset-1">
+                <p class="in-gold-500 font-18 mb-25">Password</p>
+
+                <form  method="post" action="{% url 'settings_password_save' %}" class="general-form-md divider-lg-bottom pb-25">
+                    {% csrf_token %}
+                    <input type="hidden" name="form_type" value="change_password">
+                    <div class="form-group mb-30">
+                        <label for="oldPassword" class="control-label input-label">Old Password</label>
+                        <input id="oldPassword" name="old_password" type="password" placeholder="Old Password"
+                            class="form-control" />
+                    </div>
+                    <div class="form-group mb-30">
+                        <label for="password" class="control-label input-label">New Password</label>
+                        <input id="password" name="new_password" type="password" placeholder="New Password"
+                            class="form-control" />
+                    </div>
+                    <div class="form-group mb-40">
+                        <label for="confirmPassword" class="control-label input-label">Confirm Password</label>
+                        <input id="confirmPassword" name="confirm_password" type="password" placeholder="Confirm Password"
+                            class="form-control" />
+                    </div>
+                    <div class="general-text-align">
+                        <button class="btn btn-default mb-10">Save</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const params = new URLSearchParams(window.location.search);
+        const tab = params.get("tab");
+    
+        if (tab) {
+            const trigger = document.querySelector(`a[href="#${tab}"]`);
+            if (trigger) {
+                $(trigger).tab("show");
+            }
+        }
+    });
+
+    document.addEventListener("DOMContentLoaded", function() {
+
+    const editBtn = document.getElementById("edit-profile-btn");
+    const profileView = document.getElementById("profile-view");
+    const profileForm = document.getElementById("profile-form");
+
+    if (!editBtn) return;
+
+    editBtn.addEventListener("click", function(e) {
+        e.preventDefault();
+
+        // скрываем просмотр
+        profileView.style.display = "none";
+
+        // показываем форму
+        profileForm.style.display = "block";
+    });
+    const cancelBtn = document.getElementById("cancel-profile-btn");
+
+    if (cancelBtn) {
+        cancelBtn.addEventListener("click", function() {
+            profileForm.style.display = "none";
+            profileView.style.display = "block";
+        });
+    }
+
+    });
+</script>
+{% endblock %}

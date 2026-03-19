@@ -1,0 +1,63 @@
+<ul class="steps list-inline">
+    <li class="step
+        {% if step == 1 %}active{% elif has_address %}done{% endif %}">
+      <span class="step-number">
+        {% if has_address %}
+          <i class="fa fa-check step-icon"></i>
+        {% else %}
+          1
+        {% endif %}
+      </span>
+      <span class="step-text hidden-xs">Address</span>
+    </li>
+  
+    <li class="step-divider"></li>
+  
+    <li class="step
+        {% if step == 2 %}active{% elif has_delivery %}done{% endif %}">
+      <span class="step-number">
+        {% if has_delivery %}
+          <i class="fa fa-check step-icon"></i>
+        {% else %}
+          2
+        {% endif %}
+      </span>
+      <span class="step-text hidden-xs">Delivery</span>
+    </li>
+  
+    <li class="step-divider"></li>
+  
+    <li class="step
+        {% if step == 3 %}active{% elif has_payment %}done{% endif %}">
+      <span class="step-number">
+        {% if has_payment %}
+          <i class="fa fa-check step-icon"></i>
+        {% else %}
+          3
+        {% endif %}
+      </span>
+      <span class="step-text hidden-xs">Payment</span>
+    </li>
+  
+    <li class="step-divider"></li>
+  
+    <li class="step
+        {% if step == 4 %}active{% elif has_confirm %}done{% endif %}">
+      <span class="step-number">
+        {% if has_confirm %}
+          <i class="fa fa-check step-icon"></i>
+        {% else %}
+          4
+        {% endif %}
+      </span>
+      <span class="step-text hidden-xs">Confirm</span>
+    </li>
+  
+    <li class="step-divider"></li>
+  
+    <li class="step {% if step == 5 %}active{% endif %}">
+      <span class="step-number">5</span>
+      <span class="step-text hidden-xs">Complete</span>
+    </li>
+  
+  </ul>

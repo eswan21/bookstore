@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout Payment - Bookstore{% endblock %}
+
+{% block content %}
+<h1 class="general-title-margin">Checkout</h1>
+
+{% include "order/_checkout_steps.html" %}
+
+<h3 class="general-subtitle">Credit Card</h3>
+<form  method="post" action="{% url 'checkout_payment' %}" novalidate>
+    {% csrf_token %}
+    <div class="max-600 mb-80">
+        <div class="form-group {% if form.card_number.errors %}has-error{% endif %}"">
+            <label for="cardNumber" class="control-label input-label">Card Number</label>
+            <input id="cardNumber" name="card_number" type="text" inputmode="numeric" autocomplete="cc-number" placeholder="Card Number"class="form-control" maxlength="23" />
+            {% if form.card_number.errors %}
+                <span class="help-block">{{ form.card_number.errors.0 }}</span>
+            {% endif %}
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group {% if form.name_on_card.errors %}has-error{% endif %}">
+                    <label for="cardName" class="control-label input-label">Name on Card</label>
+                    <input id="cardName" type="text" name="name_on_card" placeholder="Name on Card" class="form-control" />
+                    {% if form.name_on_card.errors %}
+                        <span class="help-block">{{ form.name_on_card.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group {% if form.expiry.errors %}has-error{% endif %}">
+                    <label for="expiry" class="control-label input-label">MM / YY</label>
+                    <input name="expiry" id="expiry" type="text" placeholder="MM / YY" class="form-control" maxlength="5" />
+                    {% if form.expiry.errors %}
+                        <span class="help-block">{{ form.expiry.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group relative {% if form.cvv.errors %}has-error{% endif %}">
+                    <label for="cvv" class="control-label input-label">CVV</label>
+                    <input id="cvv" name="cvv" type="text" inputmode="numeric" placeholder="CVV" class="form-control" maxlength="4" />
+                    <span class="ccv-help" tabindex="0" aria-label="CVV help">
+                        <i class="fa fa-question-circle general-form-help" aria-hidden="true"></i>
+                        <span class="ccv-tooltip" role="tooltip">
+                          3-digit security code, usually found on the back of your card. American Express cards has 4-digit code, located on the front.
+                        </span>
+                    </span>
+                    {% if form.cvv.errors %}
+                        <span class="help-block">{{ form.cvv.errors.0 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="general-text-align">
+        <p class="in-gold-500 font-18">Order Summary</p>
+        <table class="general-summary-table">
+            <tr>
+                <td>
+                    <p class="font-16">Subtotal:</p>
+                </td>
+                <td>
+                    <p class="font-16">€{{ subtotal }}</p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p class="font-16">Coupon:</p>
+                </td>
+                <td>
+                    <p class="font-16">
+                        {% if discount > 0 %}
+                             € -{{ discount }}
+                        {% else %}
+                            €{{ discount }}
+                        {% endif %}
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p class="font-16">Shipping:</p>
+                </td>
+                <td>
+                    <p class="font-16">€{{ shipping_price }}</p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <strong class="font-18">Order Total:</strong>
+                </td>
+                <td>
+                    <strong class="font-18">€{{ total }}</strong>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="text-center">
+        <button type="submit"  class="btn btn-default mb-80">Save and Continue</button>
+    </div>
+</form>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    
+        const expiryInput = document.getElementById("expiry");
+    
+        expiryInput.addEventListener("input", function () {
+    
+            // Убираем всё кроме цифр
+            let value = this.value.replace(/\D/g, "");
+    
+            // Добавляем слэш после 2 цифр
+            if (value.length > 2) {
+                value = value.slice(0, 2) + "/" + value.slice(2, 4);
+            }
+    
+            // Ограничиваем до 5 символов
+            this.value = value.slice(0, 5);
+        });
+    
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const cvvInput = document.getElementById("cvv");
+
+        cvvInput.addEventListener("input", function () {
+            this.value = this.value.replace(/\D/g, "").slice(0, 4);
+        });
+
+        });
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const help = document.querySelector(".ccv-help");
+        if (!help) return;
+
+        help.addEventListener("click", (e) => {
+            e.stopPropagation();
+            help.classList.toggle("open");
+        });
+
+        document.addEventListener("click", () => help.classList.remove("open"));
+        });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const input = document.getElementById("cardNumber");
+        if (!input) return;
+
+        function formatCardNumber(value) {
+            const digits = value.replace(/\D/g, "").slice(0, 19); 
+            return digits.replace(/(.{4})/g, "$1 ").trim();       
+        }
+
+        input.addEventListener("input", function () {
+            const start = this.selectionStart;
+            const before = this.value;
+            const formatted = formatCardNumber(before);
+
+            this.value = formatted;
+
+            const diff = formatted.length - before.length;
+            const newPos = Math.max(0, (start || 0) + diff);
+            this.setSelectionRange(newPos, newPos);
+        });
+        });
+    </script>
+{% endblock %}

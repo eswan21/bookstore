@@ -1,0 +1,289 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Cart - Bookstore{% endblock %}
+
+{% block content %}
+    <a href="{{ request.session.cart_next|default:'/' }}"
+        aria-label="Close"
+        class="close general-cart-close">
+        <span aria-hidden="true">&times;</span>
+    </a>
+
+    <h1 class="general-title-margin">Cart</h1>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+    
+    {% if items %}
+    <div class="visible-xs">
+        {% for item in items %}
+        <div class="general-cart-item divider-lg-bottom">
+            <form method="post" action="{% url 'delete_book_from_cart' item.book.id %}"style="display:inline;">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.GET.next|default:'' }}">
+                <button type="submit" aria-label="Close" class="close general-cart-close">
+                    <span aria-hidden="true">&times;</span></button>
+            </form>
+            <div class="general-img-wrap-table">
+                <a href="{% url 'book_detail' item.book.id %}">
+                    <img src="{{item.book.image1.url}}"
+                    alt="design-book" class="cart-img-shadow" />
+                </a>
+            </div>
+            <p class="title">{{item.book.title}}</p>
+            <table class="table">
+                <tr>
+                    <td>
+                        <span class="in-grey-600">Price</span>
+                    </td>
+                    <td>
+                        <span class="font-16 in-gold-500">€{{item.book.price}}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="vertical-middle">
+                        <span class="in-grey-600">Quantity</span>
+                    </td>
+                    <td>
+                        <div class="input-group" data-book-id="{{ item.book.id }}">
+                            <a href="#" class="input-link quantity-minus">
+                                <i class="fa fa-minus line-heaght-40" style="margin-top: 12px"></i></a>
+                            <input type="text" class="form-control quantity-input" value="{{item.qty}}"/>
+                            <a href="#" class="input-link quantity-plus">
+                                <i class="fa fa-plus line-heaght-40" style="margin-top: 12px"></i></a>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span class="in-grey-600 ">SubTotal</span>
+                    </td>
+                    <td>
+                        <span class="font-16 in-gold-500 item-subtotal">€{{item.subtotal}}</span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        {% endfor %}
+    </div>
+
+
+
+    <div class="hidden-xs">
+        <table class="table table-hover">
+            <tr class="no-hover">
+                <th class="col-pic pl-0">
+                    <span class="in-grey-600">Product</span>
+                </th>
+                <th class="col-title"></th>
+                <th class="col-price">
+                    <span class="in-grey-600">Price</span>
+                </th>
+                <th class="col-quantity">
+                    <span class="in-grey-600">Quantity</span>
+                </th>
+                <th class="col-total">
+                    <span class="in-grey-600">SubTotal</span>
+                </th>
+                <th class="col-close"></th>
+            </tr>
+            {% for item in items %}
+            <tr>
+                <td>
+                    <div class="general-img-wrap-table">
+                        <a href="{% url 'book_detail' item.book.id %}">
+                            <img src="{{item.book.image1.url}}"
+                                alt="{{item.book.title}}" class="cart-img-shadow pull-left" />
+                        </a>
+                    </div>
+                </td>
+                <td>
+                    <p class="title">{{item.book.title}}</p>
+                </td>
+                <td>
+                    <span class="font-16 in-gold-500">€{{item.book.price}}</span>
+                </td>
+                <td>
+                    <div class="input-group" data-book-id="{{ item.book.id }}">
+                        <a href="#" class="input-link quantity-minus">
+                            <i class="fa fa-minus line-heaght-40" style="margin-top: 12px"></i></a>
+                        <input type="text" class="form-control quantity-input" value="{{item.qty}}" />
+                        <a href="#" class="input-link quantity-plus">
+                            <i class="fa fa-plus line-heaght-40" style="margin-top: 12px"></i></a>
+                    </div>
+                </td>
+                <td>
+                    <span class="font-16 in-gold-500 item-subtotal">€{{item.subtotal}}</span>
+                </td>
+                <td>
+                    <form method="post" action="{% url 'delete_book_from_cart' item.book.id %}"style="display:inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ request.GET.next|default:'' }}">
+                        <button type="submit" aria-label="Close" class="close general-cart-close">
+                            <span aria-hidden="true">&times;</span></button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+
+
+    <div class="general-order-wrap">
+        <div class="row">
+            <div class="col-sm-4">
+                <form method="post" action="{% url 'add_coupon' %}">
+                    {% csrf_token %}
+                    <div class="input-group general-input-group">
+                        <label class="input-label">Enter Your Coupon Code</label>
+                        {% if cart.coupon %}
+                            <input type="text" name="code" placeholder="Enter Your Coupon Code" class="form-control mb-30" value="{{ cart.coupon.code }}"/>
+                        {% else %}
+                        <input type="text" name="code" placeholder="Enter Your Coupon Code" class="form-control mb-30" value=""/>
+                        {% endif %}
+                        <div>
+                            <button type="submit" class="btn btn-primary mr-5 mb-15 res-block">Apply Coupon</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-sm-8">
+                <div class="res-mr-200 text-center general-text-right">
+                    <p class="in-gold-500 font-18">Order Summary</p>
+                    <table class="general-summary-table general-summary-table-right general-text-right">
+                        <tr>
+                            <td>
+                                <p class="font-16">Subtotal:</p>
+                            </td>
+                            <td>
+                                <p class="font-16" id="cart-subtotal">€{{ subtotal }}</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p class="font-16">Coupon:</p>
+                            </td>
+                            <td>
+                                <p class="font-16" id="cart-discount">{% if discount > 0 %}
+                                                        € -{{ discount }}
+                                                    {% else %}
+                                                        €{{ discount }}
+                                                    {% endif %}
+                                </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong class="font-18">Order Total:</strong>
+                            </td>
+                            <td>
+                                <strong class="font-18" id="cart-total">€{{ total }}</strong>
+                            </td>
+                        </tr>
+                    </table>
+                    <form method="get" action="{% url 'checkout_email' %}">
+                        <button type="submit"
+                                class="btn btn-default mb-20 visible-xs-inline-block">
+                            Checkout
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <form method="get" action="{% url 'checkout_email' %}">
+        <button type="submit"
+                class="btn btn-default mb-20 hidden-xs center-block">
+            Checkout
+        </button>
+    </form>
+
+    {% else %}
+        <div style="height: 400px ">
+            <p style="font-size: 20px;">Your cart is empty.</p>
+        </div>
+    {% endif %}
+
+<script>
+
+    function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+        const csrftoken = getCookie('csrftoken');
+
+    function updateCart(group, value) {
+        const input = group.querySelector('.quantity-input');
+        const bookId = group.dataset.bookId;
+
+        // защита
+        if (isNaN(value) || value < 1) value = 1;
+        input.value = value;
+
+        fetch("/cart/update/", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrftoken,
+            },
+            body: JSON.stringify({
+                book_id: bookId,
+                quantity: value
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            input.value = data.quantity;
+
+            const container = group.closest('.general-cart-item') || group.closest('tr');
+            const subtotalElem = container.querySelector('.item-subtotal');
+            if (subtotalElem) {
+                subtotalElem.textContent = "€" + data.subtotal;
+            }
+
+            const totalElem = document.getElementById('cart-total');
+            const cartSubtotalElem = document.getElementById('cart-subtotal');
+            const discountElem = document.getElementById('cart-discount');
+            if (totalElem) totalElem.textContent = "€" + data.total;
+            if (cartSubtotalElem) cartSubtotalElem.textContent = "€" + data.cart_subtotal;
+            if (discountElem) {
+                const d = parseFloat(data.discount || "0");
+                discountElem.textContent = d > 0 ? "€ -" + data.discount : "€0.00";
+                }
+        });
+    }
+
+    document.addEventListener('click', function (e) {
+        const minusBtn = e.target.closest('.quantity-minus');
+        const plusBtn  = e.target.closest('.quantity-plus');
+        if (!minusBtn && !plusBtn) return;
+
+        e.preventDefault();
+
+        const group = (minusBtn || plusBtn).closest('.input-group');
+        const input = group.querySelector('.quantity-input');
+
+        let value = parseInt(input.value || '1', 10);
+        if (plusBtn) value += 1;
+        if (minusBtn && value > 1) value -= 1;
+
+        updateCart(group, value);
+    });
+
+    document.addEventListener('input', function (e) {
+        const input = e.target.closest('.quantity-input');
+        if (!input) return;
+
+        const group = input.closest('.input-group');
+        let value = parseInt(input.value || '1', 10);
+
+        updateCart(group, value);
+    });
+   
+</script>
+{% endblock %}

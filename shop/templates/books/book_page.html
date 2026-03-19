@@ -1,0 +1,340 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %} - Bookstore{% endblock %}
+
+{% block content %}
+{% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %} 
+<a href="{% url 'book_page' %}" class="general-back-link">
+    <i class="fa fa-long-arrow-left mr-15"></i>Back to results</a>
+<div class="row">
+    <div class="col-sm-6">
+        <div class="product-gallery">
+            <div class="mt-10 mb-20 book-cover">
+                {% if book.image1 %}
+                    <img src="{{ book.image1.url }}" alt="{{ book.title }}"/>
+                {% else %}
+                    <img src="{% static 'img/placeholder-book.png' %}" alt="{{ book.title }}"/>
+                {% endif %}
+            </div>
+            <div class="images clearfix">
+                {% if book.image2 %}
+                    <a href="{{ book.image2.url }}" class="img-link">
+                        <img src="{{ book.image2.url }}" alt="{{ book.title }} image 2" />
+                    </a>
+                {% endif %}
+            
+                {% if book.image3 %}
+                    <a href="{{ book.image3.url }}" class="img-link">
+                        <img src="{{ book.image3.url }}" alt="{{ book.title }} image 3" />
+                    </a>
+                {% endif %}
+            
+                {% if book.image4 %}
+                    <a href="{{ book.image4.url }}" class="img-link">
+                        <img src="{{ book.image4.url }}" alt="{{ book.title }} image 4" />
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <h1 class="mt-res-0">{{ book.title }}</h1>
+        <p class="lead small">
+            {% for a in book.authors.all %}
+            {{ a.first_name }} {{ a.last_name }}{% if not forloop.last %}, {% endif %}
+            {% empty %}—{% endfor %}
+        </p>
+        <form method="post" class="js-add-to-cart" action="{% url 'add_book_to_cart' book.id %}">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-xs-12 col-md-4">
+                    <p class="h1 in-gold-500 mt-10">€{{ book.price }}</p>
+                </div>
+                <div class="col-xs-5 col-md-3">
+                    <div class="input-group general-position">
+                        <a href="#" class="input-link quantity-minus">
+                            <i class="fa fa-minus line-height-40" style="margin-top: 13px"></i></a>
+                        <input type="number" class="form-control quantity-input" name="quantity" value="1" min="1" />
+                        <a href="#" class="input-link quantity-plus">
+                            <i class="fa fa-plus line-height-40" style="margin-top: 12px"></i></a>
+                    </div>
+                </div>
+                <div class="col-xs-7 col-md-5">
+                        <button type="submit" class="btn btn-default pull-right general-position">Add to Cart</button>
+                </div>
+            </div>
+        </form>
+        <div class="general-info-wrap divider-lg">
+            <p>Description</p>
+            <p class="lead small line-height-2">
+                <span id="book-desc" class="desc-text">
+                {{ book.description }}
+                </span>
+            <a id="readmore" href="#" class="in-gold-500 readmore-link">Read more</a>
+            </p>
+        </div>
+        <div class="general-info-wrap divider-lg">
+            <div class="clearfix">
+                <p class="pull-left">Year of publication</p>
+                <p class="lead small pull-right">{{ book.publication_year }}</p>
+            </div>
+        </div>
+        <div class="general-info-wrap divider-lg">
+            <div class="clearfix">
+                <p class="pull-left">Dimensions</p>
+                <p class="lead small pull-right">{{ book.dimensions }}</p>
+            </div>
+        </div>
+        <div class="general-info-wrap divider-lg">
+            <div class="clearfix">
+                <p class="pull-left">Materials</p>
+                <p class="lead small pull-right">{{ book.materials }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="mb-80">
+    <div class="clearfix mb-25">
+        <h3 class="in-gold-500 pull-left">
+            Reviews ({{ reviews_total }})
+        </h3>
+
+        <div id="addReview" class="pull-right" style="margin-top: 20px;">
+            <button class="btn btn-primary">
+                Leave your review
+            </button>
+        </div>
+    </div>
+
+    <div id="reviewForm" {% if form.errors %}{% else %}hidden{% endif %}>
+        
+        <button id="closeReviewForm" type="button" class="close" data-dismiss="modal" aria-label="Close" style="font-size: 27px !important">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h4>Write a Review</h4>
+        
+        {% if user.is_authenticated %}
+        <form action="{% url 'add_review' book.id %}" method="post">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="score" class="control-label input-label in-grey-350">Score</label>
+                <div id="stars" class="mb-15">
+                    {% if form.rating.errors %}
+                        <div class="text-danger mb-10">
+                            {{ form.rating.errors.0 }}
+                        </div>
+                    {% endif %}
+                    <i id="star1" class="fa fa-star rate-empty"></i>
+                    <i id="star2" class="fa fa-star rate-empty"></i>
+                    <i id="star3" class="fa fa-star rate-empty"></i>
+                    <i id="star4" class="fa fa-star rate-empty"></i>
+                    <i id="star5" class="fa fa-star rate-empty"></i>
+                    <input type="hidden" id="rating" name="rating" value="{{ form.rating.value|default_if_none:'' }}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="firstName" class="control-label input-label in-grey-350">First Name</label>
+                {% if form.fname.errors %}
+                    <div class="text-danger mb-10">
+                        {{ form.fname.errors.0 }}
+                    </div>
+                {% endif %}
+                <input id="firstName" name="fname" type="text" class="form-control" value="{{ form.fname.value|default:user.first_name }}"/>
+            </div>
+            <div class="form-group">
+                <label for="lastName" class="control-label input-label in-grey-350">Last Name</label>
+                {% if form.lname.errors %}
+                    <div class="text-danger mb-10">
+                        {{ form.lname.errors.0 }}
+                    </div>
+                {% endif %}
+                <input id="lastName" name="lname" type="text" class="form-control" value="{{ form.lname.value|default:user.last_name }}"/>
+            </div>
+            <div class="form-group">
+                <label for="review" class="control-label input-label in-grey-350">Review</label>
+                {% if form.comment.errors %}
+                    <div class="text-danger mb-10">
+                        {{ form.comment.errors.0 }}
+                    </div>
+                {% endif %}
+                <textarea id="review" name="comment" class="form-control review-area">{{ form.comment.value|default_if_none:'' }}</textarea>
+            </div>
+            <div class="actions">
+                <button class="btn btn-default" style="margin-right: 0px">Post</button>
+            </div>
+        </form>
+        {% else %}
+        <p>
+            To leave review,
+            <a href="{% url 'login' %}?next={{ request.get_full_path|urlencode }}">Log in</a>.
+        </p>
+        {% endif %}
+    </div>
+
+    <div id="reviews">
+
+        <div id="reviewsList">
+            {% include "books/_reviews_items.html" with reviews=reviews %}
+        </div>
+          
+        {% if has_more_reviews %}
+        <div class="text-center mt-10" >
+            <button id="loadMoreReviews"
+                    class="btn bg-white in-gold-500"
+                    style="font-size: 15px"
+                    data-url="{% url 'book_reviews_more' book.id %}"
+                    data-page="{{ next_reviews_page }}">
+              Load more
+            </button>
+        </div>
+        {% endif %}
+
+    </div>
+        
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const desc = document.getElementById('book-desc');
+        const toggle = document.getElementById('readmore');
+        if (desc && toggle) {
+            const isClamped = () => desc.scrollHeight > desc.clientHeight + 1;
+            if (!isClamped()) toggle.style.display = 'none';
+            toggle.addEventListener('click', function (e) {
+            e.preventDefault();
+            desc.classList.toggle('expanded');
+            toggle.textContent = desc.classList.contains('expanded') ? 'Read less' : 'Read more';
+            });
+        }
+
+        const starsWrap = document.getElementById('stars');
+        const ratingInput = document.getElementById('rating');
+        function paint(n) {
+            if (!starsWrap) return;
+            const stars = Array.from(starsWrap.querySelectorAll('[id^="star"]'));
+            stars.forEach((el, i) => {
+            const on = i < n;
+            el.classList.toggle('rate-star', on);
+            el.classList.toggle('rate-empty', !on);
+            });
+        }
+        if (starsWrap) {
+            starsWrap.addEventListener('click', (e) => {
+            const star = e.target.closest('[id^="star"]');
+            if (!star) return;
+            const n = parseInt(star.id.replace('star', ''), 10);
+            paint(n);
+            if (ratingInput) ratingInput.value = n;
+            });
+            paint(Number(ratingInput?.value || 0));
+        }
+        
+       
+
+        const reviewForm = document.getElementById('reviewForm');
+        const closeForm = document.getElementById('closeReviewForm');
+        const addReview = document.getElementById('addReview');
+
+        if (!reviewForm || !addReview) return;
+
+        const hasErrors =
+                reviewForm.querySelector('.errorlist, .text-danger, .invalid-feedback') ||
+                document.querySelector('.alert-danger');
+
+        if (hasErrors) {
+            reviewForm.hidden = false;
+            addReview.hidden = true;
+
+            reviewForm.scrollIntoView({ behavior: "smooth", block: "center" });
+        } else {
+            reviewForm.hidden = true;
+            addReview.hidden = false;
+        }
+        addReview.addEventListener('click', (e) => {
+            e.preventDefault();
+            reviewForm.hidden = false;
+            addReview.hidden = true;
+        });
+
+
+        if (closeForm) {
+            closeForm.addEventListener('click', (e) => {
+            e.preventDefault();
+            reviewForm.hidden = true;
+            addReview.hidden = false;
+            });
+        }
+    });
+
+    document.addEventListener('click', function (e) {
+        const minusBtn = e.target.closest('.quantity-minus');
+        const plusBtn  = e.target.closest('.quantity-plus');
+        if (!minusBtn && !plusBtn) return;
+
+        e.preventDefault();
+
+        // находим input рядом
+        const group = (minusBtn || plusBtn).closest('.input-group');
+        const input = group.querySelector('.quantity-input');
+
+        let value = parseInt(input.value || '1', 10);
+        if (isNaN(value) || value < 1) value = 1;
+
+        if (plusBtn) {
+            value += 1;
+        } else if (minusBtn && value > 1) {
+            value -= 1;
+        }
+
+        input.value = value;
+    });
+
+    const btn = document.getElementById("loadMoreReviews");
+    if (btn) {
+        btn.addEventListener("click", async () => {
+        const url = btn.dataset.url;
+        const page = btn.dataset.page;
+
+        const res = await fetch(`${url}?page=${page}`, {
+            headers: {"X-Requested-With": "XMLHttpRequest"}
+        });
+        const data = await res.json();
+
+        document.getElementById("reviewsList")
+            .insertAdjacentHTML("beforeend", data.html);
+
+        if (data.has_next) {
+            btn.dataset.page = data.next_page;
+        } else {
+            btn.remove(); // больше нечего грузить
+        }
+    });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+    const reviewForm = document.getElementById('reviewForm');
+    if (!reviewForm) return;
+
+    const hasErrors =
+        reviewForm.querySelector('.errorlist, .text-danger, .invalid-feedback') ||
+        document.querySelector('.alert-danger');
+
+    if (hasErrors) {
+        reviewForm.hidden = false;
+
+        reviewForm.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+        });
+    }
+    });
+
+
+</script>
+{% endblock %}

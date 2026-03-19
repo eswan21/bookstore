@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Catalog - Bookstore{% endblock %}
+
+{% block content %}
+
+    <h1 class="general-title-margin">Catalog</h1>
+  
+    <div class="hidden-xs clearfix">
+      <div class="dropdowns pull-right">
+        <div class="dropdown width-240">
+          <a href="#" data-toggle="dropdown" class="dropdown-toggle lead small" role="button" aria-haspopup="true" aria-expanded="false">
+            {% if current_sort == 'new' %}Newest first
+            {% elif current_sort == 'popular' %}Popular first
+            {% elif current_sort == 'price_asc' %}Price: Low to High
+            {% elif current_sort == 'price_desc' %}Price: High to Low
+            {% else %}Sort{% endif %}
+            <i class="fa fa-angle-down dropdown-icon pull-right"></i>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a href="?sort=new{% if current_category %}&category={{ current_category }}{% endif %}">Newest first</a></li>
+            <li><a href="?sort=popular{% if current_category %}&category={{ current_category }}{% endif %}">Popular first</a></li>
+            <li><a href="?sort=price_asc{% if current_category %}&category={{ current_category }}{% endif %}">Price: Low to High</a></li>
+            <li><a href="?sort=price_desc{% if current_category %}&category={{ current_category }}{% endif %}">Price: High to Low</a></li>
+          </ul>
+        </div>
+      </div>
+  
+      <ul class="list-inline pt-10 mb-25 mr-240">
+        <li class="mr-35">
+          <a href="{% url 'catalog' %}" class="filter-link">
+            All <span class="badge general-badge">{{ total_count }}</span>
+          </a>
+        </li>
+        {% for cat in categories %}
+          <li class="mr-35">
+            <a href="?category={{ cat.id }}{% if current_sort %}&sort={{ current_sort }}{% endif %}"
+               class="filter-link{% if current_category == cat.id %} active{% endif %}">
+              {{ cat.name }}
+              <span class="badge general-badge">{{ cat.total }}</span>
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  
+    <div class="dropdowns mb-25 visible-xs">
+      <p class="lead small mb-10">Filter by category</p>
+      <div class="dropdown">
+        <a href="#" data-toggle="dropdown" class="dropdown-toggle lead small">Categories
+          <i class="fa fa-angle-down dropdown-icon pull-right"></i>
+        </a>
+        <ul class="dropdown-menu">
+          <li><a href="{% url 'catalog' %}">All ({{ total_count }})</a></li>
+          {% for cat in categories %}
+            <li>
+              <a href="?category={{ cat.id }}{% if current_sort %}&sort={{ current_sort }}{% endif %}">
+                {{ cat.name }} ({{ cat.total }})
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+  
+      <p class="lead small mb-10">Sort by</p>
+      <div class="dropdown">
+        <a href="#" data-toggle="dropdown" class="dropdown-toggle lead small">
+          Sort <i class="fa fa-angle-down dropdown-icon pull-right"></i>
+        </a>
+        <ul class="dropdown-menu">
+          <li><a href="?sort=new{% if current_category %}&category={{ current_category }}{% endif %}">Newest first</a></li>
+          <li><a href="?sort=popular{% if current_category %}&category={{ current_category }}{% endif %}">Popular first</a></li>
+          <li><a href="?sort=price_asc{% if current_category %}&category={{ current_category }}{% endif %}">Price: Low to High</a></li>
+          <li><a href="?sort=price_desc{% if current_category %}&category={{ current_category }}{% endif %}">Price: High to Low</a></li>
+        </ul>
+      </div>
+    </div>
+  
+    <div class="mb-120">
+        {% for book in page_obj %}
+            {% if forloop.first %} 
+            <div class="row"> 
+            {% endif %}
+
+                <div class="col-xs-6 col-sm-3">
+                    <div class="general-thumb-wrap">
+                        <div class="thumbnail general-thumbnail">
+                            {% with img=book.image1 %}
+                            {% if img %}
+                                <img src="{{ img.url }}" alt="{{ book.title }}" class="img-shadow general-thumbnail-img" />
+                            {% else %}
+                                <img src="{% static 'img/placeholder-book.png' %}" alt="{{ book.title }}" class="img-shadow general-thumbnail-img" />
+                            {% endif %}
+                            {% endwith %}
+                            <div class="thumb-hover">
+                                <div class="general-thumb-link-wrap">
+                                    <a href="{% url 'book_detail' book.id %}" class="thumb-hover-link"><i aria-hidden="true" class="fa fa-eye thumb-icon mt-10"></i></a>
+                                    <a href="{% url 'add_book_to_cart' book.id %}" class="thumb-hover-link js-add-to-cart"><i class="fa fa-shopping-cart thumb-icon mt-10"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="general-thumb-info">
+                        <p class="title">{{ book.title }}</p>
+                        </a>
+                        <p class="font-16 in-gold-500">€{{ book.price }}</p>
+                        <span class="divider-sm"></span>
+                        <p class="lead small">
+                            {% for a in book.authors.all %}
+                            {{ a.first_name }} {{ a.last_name }}{% if not forloop.last %}, {% endif %}
+                            {% empty %}—{% endfor %}
+                        </p>
+                    </div>
+                </div>
+
+            {% if forloop.counter|divisibleby:4 %}
+                </div><div class="row">
+            {% elif forloop.last %}
+                </div>
+            {% endif %}
+        {% empty %}
+            <div style="height: 400px">
+                <p>There are no books matching your selection.</p>
+            </div>
+        {% endfor %}
+        </div>
+      </div>
+  
+      {% if page_obj.paginator.num_pages > 1 %}
+        <nav aria-label="Catalog pagination" class="text-center">
+          <ul class="pagination">
+            {% if page_obj.has_previous %}
+              <li><a href="?page={{ page_obj.previous_page_number }}{% if current_sort %}&sort={{ current_sort }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}">&laquo;</a></li>
+            {% else %}
+              <li class="disabled"><span>&laquo;</span></li>
+            {% endif %}
+  
+            {% for p in page_obj.paginator.page_range %}
+              {% if p == page_obj.number %}
+                <li class="active"><span>{{ p }}</span></li>
+              {% else %}
+                <li><a href="?page={{ p }}{% if current_sort %}&sort={{ current_sort }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}">{{ p }}</a></li>
+              {% endif %}
+            {% endfor %}
+  
+            {% if page_obj.has_next %}
+              <li><a href="?page={{ page_obj.next_page_number }}{% if current_sort %}&sort={{ current_sort }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}">&raquo;</a></li>
+            {% else %}
+              <li class="disabled"><span>&raquo;</span></li>
+            {% endif %}
+          </ul>
+        </nav>
+      {% endif %}
+    </div>
+{% endblock %}

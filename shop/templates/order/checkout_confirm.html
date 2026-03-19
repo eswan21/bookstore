@@ -1,0 +1,190 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout Confirm - Bookstore{% endblock %}
+
+{% block content %}
+    <h1 class="general-title-margin">Checkout</h1>
+
+    {% include "order/_checkout_steps.html" %}
+
+    <div class="row mb-20">
+        <div class="col-sm-3">
+            <h3 class="general-subtitle">Shipping Address</h3>
+            <p class="general-address">{{ cart.address.shipping_first_name }} {{ cart.address.shipping_last_name }}
+                <a href="{% url 'checkout_address' %}?next=confirm" class="general-edit">
+                    edit
+                </a>
+                <br />{{ cart.address.shipping_address1 }}
+                <br />{{ cart.address.shipping_city }} {{ cart.address.shipping_postcode }}
+                <br />{{ cart.address.shipping_country.name }}
+                <br />Phone {{ cart.address.shipping_phone }}
+            </p>
+        </div>
+        <div class="col-sm-3">
+            <h3 class="general-subtitle">Billing Address</h3>
+            <p class="general-address">{{ cart.address.billing_first_name }} {{ cart.address.billing_last_name}}
+                <a href="{% url 'checkout_address' %}?next=confirm" class="general-edit">
+                    edit
+                </a>
+                <br />{{ cart.address.billing_address1}}
+                <br />{{ cart.address.billing_city }} {{ cart.address.billing_postcode}}
+                <br />{{ cart.address.billing_country.name }}
+                <br />Phone {{ cart.address.billing_phone }}
+            </p>
+        </div>
+        <div class="col-sm-3">
+            <h3 class="general-subtitle">Shipments</h3>
+            <p class="general-address">{{ cart.shipping_method.name}}
+                <a href="{% url 'checkout_delivery' %}?next=confirm" class="general-edit">
+                    edit
+                </a>
+                <br />By train  €{{ cart.shipping_method.price}}
+            </p>
+        </div>
+        <div class="col-sm-3">
+            <h3 class="general-subtitle">Payment Information</h3>
+            <p class="general-address">** ** ** {{ cart.payment.card_last4 }}
+                <a href="{% url 'checkout_payment' %}" class="general-edit">
+                    edit
+                </a>
+                <br /> {{ cart.payment.expiry }}
+            </p>
+        </div>
+    </div>
+    <div class="visible-xs">
+        {% for item in items %}
+        <div class="general-cart-item divider-lg">
+            <div class="general-img-wrap-table">
+                <img src="{{item.book.image1.url}}" alt="design-book"
+                    class="cart-img-shadow" />
+            </div>
+            <p class="title">{{ item.book.title }}</p>
+            <P class="in-grey-600 fw-300">{{ item.book.description|truncatewords:25 }}</P>
+            <table class="table">
+                <tr>
+                    <td>
+                        <span class="in-grey-600">Price</span>
+                    </td>
+                    <td>
+                        <span class="font-16 in-gold-500">€{{ item.book.price }}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="vertical-middle">
+                        <span class="in-grey-600">Quantity</span>
+                    </td>
+                    <td>
+                        <span>{{ item.quantity }}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span class="in-grey-600">SubTotal</span>
+                    </td>
+                    <td>
+                        <span class="font-16 in-gold-500">€{{ item.line_total }}</span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="hidden-xs divider-lg pt-20">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>
+                        <span class="in-grey-600">Book</span>
+                    </th>
+                    <th class="col-method"></th>
+                    <th>
+                        <span class="in-grey-600">Price</span>
+                    </th>
+                    <th>
+                        <span class="in-grey-600">Quantity</span>
+                    </th>
+                    <th>
+                        <span class="in-grey-600">Total</span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>
+                        <div class="general-img-wrap-table">
+                            <img src="{{item.book.image1.url}}"
+                                alt="design-book" class="cart-img-shadow pull-left" />
+                        </div>
+                    </td>
+                    <td>
+                        <p class="title">{{ item.book.title }}</p>
+                        <p class="in-grey-600 fw-300">{{ item.book.description|truncatewords:25 }}</p>
+                    </td>
+                    <td>
+                        <span class="font-16 in-gold-500">€{{ item.book.price }}</span>
+                    </td>
+                    <td>
+                        <span class="ml-30">{{ item.quantity }}</span>
+                    </td>
+                    <td>
+                        <span class="font-16 in-gold-500">€{{ item.line_total }}</span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="text-center general-text-right">
+        <p class="in-gold-500 font-18">Order Summary</p>
+        <table class="general-summary-table general-summary-table-right general-text-right">
+            <tr>
+                <td>
+                    <p class="font-16">Subtotal:</p>
+                </td>
+                <td>
+                    <p class="font-16">€{{ subtotal }}</p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p class="font-16">Coupon:</p>
+                </td>
+                <td>
+                    <p class="font-16">
+                        {% if discount > 0 %}
+                             € -{{ discount }}
+                        {% else %}
+                            €{{ discount }}
+                        {% endif %}
+                    </p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p class="font-16">Shipping:</p>
+                </td>
+                <td>
+                    <p class="font-16">€{{ shipping_price }}</p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <strong class="font-18">Order Total:</strong>
+                </td>
+                <td>
+                    <strong class="font-18">€{{ total}}</strong>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="text-center">
+        <form method="post" action="{% url 'place_order' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-default mb-20">
+                Place Order
+            </button>
+        </form>
+    </div>
+{% endblock %}

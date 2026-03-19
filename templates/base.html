@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width"/>
+    <title>{% block title %}Bookstore{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet"/>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
+
+</head>
+
+<body class="site-body">
+    <div class="site-wrapper">
+        <header class="navbar navbar-default">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" data-toggle="collapse" data-target="#navbar" class="navbar-toggle pull-left">
+                        <span class="sr-only"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand">Bookstore</a>
+                    {% if request.resolver_match.url_name != 'cart' %}
+                        <a href="{% url 'cart' %}?next={{ request.get_full_path|urlencode }}" class="shop-link pull-right visible-xs cart-icon">
+                            <span class="shop-icon">
+                                <span class="shop-quantity"></span>
+                            </span>
+                        </a>
+                    {% endif %}
+                </div>
+                {% if request.resolver_match.url_name != 'cart' %}
+                    <a href="{% url 'cart' %}?next={{ request.get_full_path|urlencode }}" class="shop-link pull-right hidden-xs cart-icon">
+                        <span class="shop-icon">
+                            <span class="shop-quantity"></span>
+                        </span>
+                    </a>
+                {% endif %}
+                <div id="navbar" aria-expanded="false" class="navbar-collapse collapse pl-30">
+                    <div class="visible-xs">
+                        <button type="button" aria-label="Close" class="close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <ul class="nav navbar-nav">
+                            <li>
+                                <a href="{% url 'home' %}">Home</a></li>
+                            <li>
+                                <a type="button" data-toggle="collapse" href="#menu" aria-expanded="false" aria-controls="menu">Shop</a>
+                                <ul id="menu" aria-expanded="false" class="collapse list-unstyled pl-30 mb-10">
+                                    <li>
+                                        <a href="{% url 'catalog' %}" class="collapse-link">All</a>
+                                    </li>
+                                    {% for cat in menu_categories %}
+                                    <li>
+                                        <a href="{% url 'catalog' %}?category={{ cat.id }}">{{ cat.name }}</a>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
+
+                            {% if user.is_authenticated %}
+                                <li>
+                                    <a type="button" data-toggle="collapse" href="#account_menu" aria-expanded="false" aria-controls="menu">My account</a>
+                                    <ul id="account_menu" aria-expanded="false" class="collapse list-unstyled pl-30 mb-10">
+                                        <li>
+                                            <a href="{% url 'view_orders' %}">Orders</a>
+                                        </li>
+                                        <li>
+                                            <a href="#">Settings</a>
+                                        </li>
+                                        <li class="logout-divider">
+                                            <a href="{% url 'logout' %}">Log out</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            {% else %}    
+                                <li>
+                                    <a href="{% url 'login' %}">Log in</a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'signup' %}">Sign up</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    <div class="hidden-xs">
+                        <ul class="nav navbar-nav">
+                            <li>
+                                <a href="{% url 'home' %}">Home</a>
+                            </li>
+                            <li class="dropdown">
+                                <a href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle">Shop</a>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a href="{% url 'catalog' %}">All</a>
+                                    </li>
+                                    {% for cat in menu_categories %}
+                                    <li>
+                                        <a href="{% url 'catalog' %}?category={{ cat.id }}">{{ cat.name }}</a>
+                                    </li>
+                                    {% endfor %}
+                                    <li role="separator" class="divider">
+                                    </li>
+                                </ul>
+                            </li>
+                            {% if user.is_authenticated %}
+                                <li>
+                                    <a href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" class="dropdown-toggle">My account</a>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <a href="{% url 'view_orders' %}">Orders</a>
+                                        </li>
+                                        <li>
+                                            <a href="{% url 'settings_page' %}">Settings</a>
+                                        </li>
+                                        <li class="logout-divider">
+                                            <a href="{% url 'logout' %}">Log out</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            {% else %}    
+                                <li>
+                                    <a href="{% url 'login' %}">Log in</a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'signup' %}">Sign up</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="container site-content">
+            {% block content %}
+            {% endblock %}
+        </main>
+
+        <footer class="navbar-inverse">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-9">
+                        <ul class="list-inline general-align mb-25">
+                            <li>
+                                <a href="{% url 'home' %}" class="nav-link">Home</a>
+                            </li>
+                            <li>
+                                <a href="{% url 'catalog' %}" class="nav-link">Shop</a>
+                            </li>
+                            <li>
+                                <a href="{% url 'view_orders' %}" class="nav-link">Orders</a>
+                            </li>
+                            <li>
+                                <a href="{% url 'settings_page' %}" class="nav-link">Settings</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-sm-3">
+                        <p class="general-nav-mail">support@bookstore.com</p>
+                        <p class="general-nav-number">(555)-555-5555</p>
+                        <ul class="list-inline general-align">
+                            <li>
+                                <a href="#" class="nav-link">
+                                <i aria-hidden="true" class="fa fa-facebook"></i></a>
+                            </li>
+                            <li>
+                                <a href="#" class="nav-link">
+                                <i aria-hidden="true" class="fa fa-twitter"></i></a>
+                            </li>
+                            <li>
+                                <a href="#" class="nav-link">
+                                <i aria-hidden="true" class="fa fa-google-plus"></i></a>
+                            </li>
+                            <li>
+                                <a href="#" class="nav-link">
+                                <i aria-hidden="true" class="fa fa-instagram"></i></a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script>
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+    const csrftoken = getCookie('csrftoken');
+
+    function updateCartBadge(count) {
+        const icons = document.querySelectorAll(".shop-icon");
+
+        icons.forEach(icon => {
+            const qty = icon.querySelector(".shop-quantity");
+            const n = Number(count) || 0;
+
+            if (n > 0) {
+            // показываем цифру
+            qty.textContent = n;
+            qty.style.display = "inline-block";
+
+            // включаем "непустое" состояние
+            icon.classList.add("has-items");
+            } else {
+            // скрываем цифру
+            qty.textContent = "";
+            qty.style.display = "none";
+
+            // возвращаем "пустое" состояние
+            icon.classList.remove("has-items");
+            }
+        });
+    }
+
+    document.addEventListener("submit", function(e) {
+        const form = e.target.closest(".js-add-to-cart");
+        if (!form) return;
+
+        e.preventDefault();
+
+        fetch(form.action, {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": csrftoken,
+            "X-Requested-With": "XMLHttpRequest"
+        },
+        body: new FormData(form),
+        })
+        .then(res => res.json())
+        .then(data => {
+        if (data.status === "ok") {
+            updateCartBadge(data.cart_count);
+        }
+        })
+        .catch(console.error);
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const cartCount = JSON.parse("{{ cart_quantity|default:0 }}");
+        updateCartBadge(cartCount);
+    });
+
+
+</script>
+</body></html>

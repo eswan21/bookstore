@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Sign Up - Bookstore{% endblock %}
+
+{% block content %}
+
+<div class="container general-main-wrap">
+    <div class="text-center">
+        <h3 class="general-login-title">Sign up</h3>
+        <a href="#" class="general-login-icon">
+            <i class="fa fa-facebook-official"></i></a>
+        <p class="general-login-text">or</p>
+    </div>
+    <form class="general-form" method="post" action="{% url 'signup' %}">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <div class="form-group mb-30">
+            <label for="username" class="control-label input-label">Enter Email</label>
+            <input id="username" name="username" type="email" placeholder="Enter Email" class="form-control" />
+            {% if form.username.errors %}
+                <div class="help-block text-danger">{{ form.username.errors.0 }}</div>
+            {% endif %}
+        </div>
+        <div class="form-group mb-30">
+            <label for="password1" class="control-label input-label">Password</label>
+            <input id="password1" name="password1" type="password" placeholder="Password" class="form-control" />
+            {% if form.password1.errors %}
+                <div class="help-block text-danger">{{ form.password1.errors.0 }}</div>
+            {% endif %}
+        </div>
+        <div class="form-group mb-30">
+            <label for="password2" class="control-label input-label">Confirm Password</label>
+            <input id="password2" name="password2" type="password" placeholder="Confirm Password" class="form-control" />
+            {% if form.password2.errors %}
+                <div class="help-block text-danger">{{ form.password2.errors.0 }}</div>
+            {% endif %}
+        </div>
+        <div class="text-center mb-30">
+            <button class="btn btn-default general-position">Sign up</button>
+        </div>
+    </form>
+    <p class="general-sign-text text-center">Have an Account?
+        <a href="{% url 'login' %}" class="in-gold-500">Log in</a>
+    </p>
+</div>
+{% endblock %}

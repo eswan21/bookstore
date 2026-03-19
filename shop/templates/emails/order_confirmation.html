@@ -1,0 +1,28 @@
+<p>Hello {{ user.first_name|default:user.username }},</p>
+
+<p>Thank you for your order at <strong>Bookstore</strong>.</p>
+
+<p>
+    <strong>Order number:</strong> R{{ order.id|stringformat:"08d" }}<br>
+    <strong>Order date:</strong> {{ order.ordered_at|date:"Y-m-d H:i" }}<br>
+    <strong>Status:</strong> {{ order.get_status_display }}
+</p>
+
+<p><strong>Items:</strong></p>
+<ul>
+    {% for item in items %}
+        <li>
+            {{ item.book.title }} × {{ item.quantity }}
+            — €{{ item.subtotal|default:item.dynamic_subtotal }}
+        </li>
+    {% endfor %}
+</ul>
+
+<p>
+    <strong>Subtotal:</strong> €{{ subtotal }}<br>
+    <strong>Discount:</strong> €{{ discount_amount }}<br>
+    <strong>Shipping:</strong> €{{ shipping_price }}<br>
+    <strong>Total:</strong> €{{ total_amount }}
+</p>
+
+<p>Thank you for shopping with us.<br>Bookstore Team</p>

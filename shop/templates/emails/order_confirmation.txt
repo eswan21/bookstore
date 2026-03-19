@@ -1,0 +1,20 @@
+Hello {{ user.first_name|default:user.username }},
+
+Thank you for your order at Bookstore.
+
+Order number: R{{ order.id|stringformat:"08d" }}
+Order date: {{ order.ordered_at|date:"Y-m-d H:i" }}
+Status: {{ order.get_status_display }}
+
+Items:
+{% for item in items %}
+- {{ item.book.title }} × {{ item.quantity }} — €{{ item.subtotal|default:item.dynamic_subtotal }}
+{% endfor %}
+
+Subtotal: €{{ subtotal }}
+Discount: €{{ discount_amount }}
+Shipping: €{{ shipping_price }}
+Total: €{{ total_amount }}
+
+Thank you for shopping with us.
+Bookstore Team

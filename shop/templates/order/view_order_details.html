@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block title %}Order details - Bookstore{% endblock %}
+
+{% block content %}
+<div>
+    <h1 class="general-title-margin" style="display:inline-block;">
+        Order R{{ order.id|stringformat:"08d" }}
+    </h1>
+    <h3 class="font-16 fw-300 pull-right
+        {% if order.status == 'delivered' %}
+            text-success
+        {% elif order.status == 'canceled' %}
+            text-danger
+        {% else %}
+            in-grey-900
+        {% endif %}
+        " style="margin-top:20px;">
+            {{ order.get_status_display }}
+    </h3>
+</div>
+
+<div class="row mb-20">
+    <div class="col-sm-3">
+        <h3 class="general-subtitle mt-0">Shipping Address</h3>
+        <p class="general-address">{{ order.address.shipping_first_name }} {{ order.address.shipping_last_name }}
+            <br />{{ order.address.shipping_address1 }}
+            <br />{{ order.address.shipping_city }} {{ order.address.shipping_postcode }}
+            <br />{{ order.address.shipping_country.name }}
+            <br />Phone {{ order.address.shipping_phone }}
+        </p>
+    </div>
+    <div class="col-sm-3">
+        <h3 class="general-subtitle mt-0">Billing Address</h3>
+        <p class="general-address">{{ order.address.billing_first_name }} {{ order.address.billing_last_name }}
+            <br />{{ order.address.billing_address1 }}
+            <br />{{ order.address.billing_city }} {{ order.address.billing_postcode }}
+            <br />{{ order.address.billing_country.name }}
+            <br />Phone {{ order.address.billing_phone }}
+        </p>
+    </div>
+    <div class="col-sm-3">
+        <h3 class="general-subtitle mt-0">Shipments</h3>
+        <p class="general-address">{{ order.shipping_method.name }}
+            <br />By train €{{ order.shipping_method.price}}
+        </p>
+    </div>
+    <div class="col-sm-3">
+        <h3 class="general-subtitle mt-0">Payment Information</h3>
+        <p class="general-address">** ** ** {{ order.payment.card_last4 }}
+            <br />{{ order.payment.expiry }}
+        </p>
+    </div>
+</div>
+<div class="visible-xs">
+    {% for item in items %}
+    <div class="general-cart-item divider-lg">
+        <div class="general-img-wrap-table">
+            <img src="{{item.book.image1.url}}" alt="design-book"
+                class="cart-img-shadow" />
+        </div>
+        <p class="title">{{ item.book.title }}</p>
+        <P class="in-grey-600 fw-300">{{ item.book.description|truncatewords:25 }}</P>
+        <table class="table">
+            <tr>
+                <td>
+                    <span class="in-grey-600">Price</span>
+                </td>
+                <td>
+                    <span class="font-16 in-gold-500">€{{ item.book.price }}</span>
+                </td>
+            </tr>
+            <tr>
+                <td class="vertical-middle">
+                    <span class="in-grey-600">Quantity</span>
+                </td>
+                <td>
+                    <span>{{ item.quantity }}</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <span class="in-grey-600">SubTotal</span>
+                </td>
+                <td>
+                    <span class="font-16 in-gold-500">€{{ item.subtotal }}</span>
+                </td>
+            </tr>
+        </table>
+    </div>
+    {% endfor %}
+</div>
+<div class="hidden-xs divider-lg pt-20">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>
+                    <span class="in-grey-600">Book</span>
+                </th>
+                <th class="col-method"></th>
+                <th>
+                    <span class="in-grey-600">Price</span>
+                </th>
+                <th>
+                    <span class="in-grey-600">Quantity</span>
+                </th>
+                <th>
+                    <span class="in-grey-600">Total</span>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>
+                    <div class="general-img-wrap-table">
+                        <img src="{{item.book.image1.url}}"
+                            alt="design-book" class="cart-img-shadow pull-left" />
+                    </div>
+                </td>
+                <td>
+                    <p class="title">{{ item.book.title }}</p>
+                    <p class="in-grey-600 fw-300">{{ item.book.description|truncatewords:25 }}</p>
+                </td>
+                <td>
+                    <span class="font-16 in-gold-500">€{{ item.book.price }}</span>
+                </td>
+                <td>
+                    <span class="ml-30">{{ item.quantity }}</span>
+                </td>
+                <td>
+                    <span class="font-16 in-gold-500">€{{ item.subtotal }}</span>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class="text-center general-text-right">
+    <p class="in-gold-500 font-18">Order Summary</p>
+    <table class="general-summary-table general-summary-table-right general-text-right">
+        <tr>
+            <td>
+                <p class="font-16">Subtotal:</p>
+            </td>
+            <td>
+                <p class="font-16">€{{ subtotal }}</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p class="font-16">Coupon:</p>
+            </td>
+            <td>
+                <p class="font-16">
+                    {% if discount > 0 %}
+                        € -{{ discount }}
+                    {% else %}
+                        €{{ discount }}
+                    {% endif %}
+                </p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p class="font-16">Shipping:</p>
+            </td>
+            <td>
+                <p class="font-16">€{{ order.shipping_price }}</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <strong class="font-18">Order Total:</strong>
+            </td>
+            <td>
+                <strong class="font-18">€{{ order.total_amount }}</strong>
+            </td>
+        </tr>
+    </table>
+</div>
+{% endblock %}

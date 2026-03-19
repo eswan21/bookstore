@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Checkout address - Bookstore{% endblock %}
+
+{% block content %}
+    <h1 class="general-title-margin">Checkout</h1>
+
+    {% include "order/_checkout_steps.html" %}
+
+    <form method="post" class="res-mb-100" novalidate>
+        {% csrf_token %}
+
+        {% if request.GET.next %}
+          <input type="hidden" name="next" value="{{ request.GET.next }}">
+        {% endif %}
+        
+        <div class="hidden-xs hidden-sm">
+            <div class="row">
+                <div class="col-md-5">
+                    <h3 class="general-subtitle">Billing Address</h3>
+                    <p class="general-info-text">all fields are required</p>
+                </div>
+                <div class="col-md-5 col-md-offset-1">
+                    <h3 class="general-subtitle">Shipping Address</h3>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <!-- BILLING -->
+            <div class="col-md-5 mb-40">
+              <div class="visible-xs visible-sm">
+                <h3 class="general-subtitle">Billing Address</h3>
+                <p class="general-info-text">all fields are required</p>
+              </div>
+        
+              <div class="form-group {% if form.billing_first_name.errors %}has-error{% endif %}">
+                <label class="control-label input-label">First Name</label>
+                {{ form.billing_first_name }}
+                {% if form.billing_first_name.errors %}
+                  <span class="help-block">{{ form.billing_first_name.errors.0 }}</span>
+                {% endif %}
+              </div>
+        
+              <div class="form-group {% if form.billing_last_name.errors %}has-error{% endif %}">
+                <label class="control-label input-label">Last Name</label>
+                {{ form.billing_last_name }}
+                {% if form.billing_last_name.errors %}
+                  <span class="help-block">{{ form.billing_last_name.errors.0 }}</span>
+                {% endif %}
+              </div>
+        
+              <div class="form-group {% if form.billing_address1.errors %}has-error{% endif %}">
+                <label class="control-label input-label">Address</label>
+                {{ form.billing_address1 }}
+                {% if form.billing_address1.errors %}
+                  <span class="help-block">{{ form.billing_address1.errors.0 }}</span>
+                {% endif %}
+              </div>
+        
+              <div class="form-group {% if form.billing_city.errors %}has-error{% endif %}">
+                <label class="control-label input-label">City</label>
+                {{ form.billing_city }}
+                {% if form.billing_city.errors %}
+                  <span class="help-block">{{ form.billing_city.errors.0 }}</span>
+                {% endif %}
+              </div>
+        
+              <div class="form-group {% if form.billing_postcode.errors %}has-error{% endif %}">
+                <label class="control-label input-label">Zip</label>
+                {{ form.billing_postcode }}
+                {% if form.billing_postcode.errors %}
+                  <span class="help-block">{{ form.billing_postcode.errors.0 }}</span>
+                {% endif %}
+              </div>
+        
+              <div class="form-group {% if form.billing_country.errors %}has-error{% endif %}">
+                <label class="control-label input-label">Country</label>
+                {{ form.billing_country }}
+                {% if form.billing_country.errors %}
+                  <span class="help-block">{{ form.billing_country.errors.0 }}</span>
+                {% endif %}
+              </div>
+        
+              <div class="form-group {% if form.billing_phone.errors %}has-error{% endif %}">
+                <label class="control-label input-label">Phone</label>
+                {{ form.billing_phone }}
+                {% if form.billing_phone.errors %}
+                  <span class="help-block">{{ form.billing_phone.errors.0 }}</span>
+                {% endif %}
+              </div>
+            </div>
+        
+            <!-- SHIPPING -->
+            <div class="col-md-5 col-md-offset-1 mb-60" id="shipping-column">
+                <div id="shipping-fields">
+                    <div class="visible-xs visible-sm">
+                        <h3 class="general-subtitle">Shipping Address</h3>
+                    </div>
+                
+                    <div class="form-group {% if form.shipping_first_name.errors %}has-error{% endif %}">
+                        <label class="control-label input-label">First Name</label>
+                        {{ form.shipping_first_name }}
+                        {% if form.shipping_first_name.errors %}
+                        <span class="help-block">{{ form.shipping_first_name.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+                
+                    <div class="form-group {% if form.shipping_last_name.errors %}has-error{% endif %}">
+                        <label class="control-label input-label">Last Name</label>
+                        {{ form.shipping_last_name }}
+                        {% if form.shipping_last_name.errors %}
+                        <span class="help-block">{{ form.shipping_last_name.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+                
+                    <div class="form-group {% if form.shipping_address1.errors %}has-error{% endif %}">
+                        <label class="control-label input-label">Address</label>
+                        {{ form.shipping_address1 }}
+                        {% if form.shipping_address1.errors %}
+                        <span class="help-block">{{ form.shipping_address1.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+                
+                    <div class="form-group {% if form.shipping_city.errors %}has-error{% endif %}">
+                        <label class="control-label input-label">City</label>
+                        {{ form.shipping_city }}
+                        {% if form.shipping_city.errors %}
+                        <span class="help-block">{{ form.shipping_city.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+                
+                    <div class="form-group {% if form.shipping_postcode.errors %}has-error{% endif %}">
+                        <label class="control-label input-label">Zip</label>
+                        {{ form.shipping_postcode }}
+                        {% if form.shipping_postcode.errors %}
+                        <span class="help-block">{{ form.shipping_postcode.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+                
+                    <div class="form-group {% if form.shipping_country.errors %}has-error{% endif %}">
+                        <label class="control-label input-label">Country</label>
+                        {{ form.shipping_country }}
+                        {% if form.shipping_country.errors %}
+                        <span class="help-block">{{ form.shipping_country.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+                
+                    <div class="form-group {% if form.shipping_phone.errors %}has-error{% endif %}">
+                        <label class="control-label input-label">Phone</label>
+                        {{ form.shipping_phone }}
+                        {% if form.shipping_phone.errors %}
+                        <span class="help-block">{{ form.shipping_phone.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-group checkbox checkout-checkbox" id="use-billing-wrap">
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="use_billing" value="1" class="checkbox-input" id="use_billing">
+                        <span class="checkbox-icon">
+                            <i class="fa fa-check"></i>
+                        </span>
+                        <span class="checkbox-text">Use Billing Adress</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+          {# Общие ошибки формы (если вдруг будут) #}
+          {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+              {{ form.non_field_errors }}
+            </div>
+          {% endif %}
+        
+    
+        <div class="general-text-align mb-60">
+            <p class="in-gold-500 font-18">Order Summary</p>
+            <table class="general-summary-table">
+                <tr>
+                    <td>
+                        <p class="font-16">Item Total:</p>
+                    </td>
+                    <td>
+                        <p class="font-16">€{{ subtotal }}</p>
+                    </td>
+                </tr>
+                <tr>
+                  <td>
+                      <p class="font-16">Coupon:</p>
+                  </td>
+                  <td>
+                      <p class="font-16">
+                        {% if discount > 0 %}
+                             € -{{ discount }}
+                        {% else %}
+                            €{{ discount }}
+                        {% endif %}
+                      </p>
+                  </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p class="font-16">Order Total:</p>
+                    </td>
+                    <td>
+                        <p class="font-16">€{{ total }}</p>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <button class="btn btn-default in-white center-block mb-60" type="submit">Save and Continue</button>
+    </form>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+          const checkbox = document.getElementById("use_billing");
+          const shippingFields = document.getElementById("shipping-fields");
+        
+          function toggleShipping() {
+            shippingFields.style.display = checkbox.checked ? "none" : "block";
+          }
+        
+          toggleShipping();
+          checkbox.addEventListener("change", toggleShipping);
+        });
+        </script>
+{% endblock %}

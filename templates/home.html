@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <div id="slider" data-ride="carousel" class="carousel slide">
+        <ol class="carousel-indicators">
+            {% for book in latest_books %}
+                <li data-target="#slider"
+                    data-slide-to="{{ forloop.counter0 }}"
+                    class="{% if forloop.first %}active{% endif %}">
+                </li>
+            {% endfor %}
+        </ol>
+        <div role="listbox" class="carousel-inner">
+            {% for book in latest_books %}
+            <div class="item {% if forloop.first %}active{% endif %}">
+                <div class="row">
+                    <div class="col-sm-5">
+                        <div class="general-img-wrap">
+                            {% if book.image1 %}
+                                <img src="{{ book.image1.url }}" alt="{{ book.title }}" class="img-shadow general-thumbnail-img" />
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-sm-7">
+                        <div class="mb-60">
+                            <h1>{{ book.title }}</h1>
+                            <p class="lead">{{ book.description|truncatewords:25 }}</p>
+                            <p class="lead small">
+                                {% for author in book.authors.all %}
+                                    {{ author.first_name }} {{ author.last_name }}
+                                    {% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            </p>
+                            <div class="general-align">
+                                <form method="post" action="{% url 'add_book_to_cart' book.id %}" style="display:inline;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="quantity" value="1">
+                                    <button type="submit" class="btn btn-default">Buy Now</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <a href="#slider" role="button" data-slide="prev" class="left carousel-control">
+            <span aria-hidden="true" class="icon-prev"></span>
+            <span class="sr-only">Previous</span></a>
+        <a href="#slider" role="button" data-slide="next" class="right carousel-control">
+            <span aria-hidden="true" class="icon-next"></span>
+            <span class="sr-only">Next</span></a>
+    </div>
+</div>
+<div class="container">
+    <div class="jumbotron text-center mb-0">
+        <h2 class="h1">Welcome to our amazing Bookstore!</h2>
+        <div class="mb-res-50">
+            <p>We pore through hundreds of new books each month and select the five best we can find to share with our
+                members.</p>
+        </div>
+        <a href="{% url 'catalog' %}" class="btn btn-default ">
+            Get Started
+        </a>
+    </div>
+    <div class="mb-35">
+        <h3>Best Sellers</h3>
+        <div class="row">
+            {% for book in top_sellers %}
+            <div class="col-sm-6 col-md-3">
+                <div class="general-thumb-wrap">
+                    <div class="thumbnail general-thumbnail">
+                        {% if book.image1 %}
+                                <img src="{{ book.image1.url }}" alt="{{ book.title }}" class="img-shadow general-thumbnail-img" />
+                        {% endif %}
+                        <div class="thumb-hover">
+                            <div class="general-thumb-link-wrap">
+                                <a href="{% url 'book_detail' book.id %}" class="thumb-hover-link"><i aria-hidden="true" class="fa fa-eye thumb-icon mt-10"></i></a>
+                                <a href="{% url 'add_book_to_cart' book.id %}" class="thumb-hover-link js-add-to-cart"><i class="fa fa-shopping-cart thumb-icon mt-10"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-35">
+                    <div class="clearfix">
+                        <p class="pull-right font-16 in-gold-500">€{{ book.price }}</p>
+                        <p class="title mr-55">{{ book.title }}</p>
+                    </div>
+                    <span class="divider-sm"></span>
+                    <p class="lead small">
+                        {% for author in book.authors.all %}
+                            {{ author.first_name }} {{ author.last_name }}
+                            {% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    </p>
+                </div>
+            </div>
+            {% endfor %}
+    </div>
+</div>
+{% endblock %}

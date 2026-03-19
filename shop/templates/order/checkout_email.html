@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Checkout email - Bookstore{% endblock %}
+
+{% block content %}
+<div class="container mb-60">
+    <div class="row">
+      <!-- LEFT: Returning Customer -->
+        <div class="col-md-6 mb-60">
+            <div class="text-center">
+                <h3 class="text-center" style="color:#c59c71">Returning Customer</h3>
+                <a href="#" class="general-login-icon">
+                    <i class="fa fa-facebook-official"></i></a>
+                <p class="general-login-text">or</p>
+            </div>
+            
+            <form method="post" action="{% url 'login' %}" class="general-form">
+                <h5>Log In with Password</h5>
+                {% csrf_token %}
+
+                {% if login_error %}
+                    <div class="alert alert-danger">
+                        {{ login_error }}
+                    </div>
+                {% endif %}
+
+                <div class="form-group mb-30">
+                    <label for="username" class="control-label input-label" style="color: #555555">Enter Email</label>
+                    <input id="username" name="username" type="email" placeholder="Enter Email" class="form-control" />
+                </div>
+                <div class="form-group" style="margin-bottom: 10px;">
+                    <label for="password" class="control-label input-label" style="color: #555555">Password</label>
+                    <input id="password" name="password" type="password" placeholder="Password" class="form-control" />
+                </div>
+                <div class ="mb-30">
+                    <a href="#" style="color:#c59c71">Forgot password?</a>
+                </div>
+
+                <input type="hidden" name="next" value="{% url 'cart' %}">
+
+                <div class="mb-30">
+                    <button type="submit" class="btn btn-default bg-grey-350" style="min-width: 220px;">
+                        Log In with Password
+                    </button>
+                </div>
+            </form>
+        </div>
+        <!-- RIGHT: New Customer -->
+        <div class="col-md-6 mb-60">
+            <div class="text-center">
+                <h3 class="text-center" style="color:#c59c71">New Customer</h3>
+                <a href="#" class="general-login-icon">
+                    <i class="fa fa-facebook-official"></i></a>
+                <p class="general-login-text">or</p>
+            </div>
+            
+            <form method="post" action="{% url 'quick_register' %}" class="general-form">
+                <h5 style=" margin-bottom: 5px;">Quik Register</h5>
+                <p class="mb-30" style="color: grey;font-size: 12px;">
+                    You'll be able to create password later
+                </p>
+                {% csrf_token %}
+
+                {% if quick_register_error %}
+                    <div class="alert alert-danger">
+                        {{ quick_register_error }}
+                    </div>
+                {% endif %}
+
+                <div class="form-group mb-30">
+                    <label for="username" class="control-label input-label" style="color: #555555">Enter Email</label>
+                    <input name="username" type="email" placeholder="Enter Email" class="form-control" />
+                </div>
+
+                <input type="hidden" name="next" value="{% url 'checkout_address' %}">
+
+                <div class="mb-30">
+                    <button type="submit" class="btn btn-default bg-grey-350" style="min-width: 220px;">
+                        Continue to Сheckout
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
